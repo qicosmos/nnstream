@@ -59,11 +59,11 @@ namespace experimental {
 	constexpr const loss_type eculidean = loss_type::eculidean;
 	constexpr const loss_type distance = loss_type::distance;
 
-	struct conv_shape {
-		conv_shape() = default;
-		conv_shape(size_t h) : h_(h), w_(h) {}
-		conv_shape(size_t h, size_t w) : h_(h), w_(w) {}
-		conv_shape(size_t c, size_t h, size_t w) :c_(c), h_(h), w_(w) {}
+	struct shape {
+		shape() = default;
+		shape(size_t h) : h_(h), w_(h) {}
+		shape(size_t h, size_t w) : h_(h), w_(w) {}
+		shape(size_t c, size_t h, size_t w) :c_(c), h_(h), w_(w) {}
 
 		std::string to_string() {
 			std::stringstream ss;
@@ -125,7 +125,7 @@ namespace experimental {
 	BOOST_PARAMETER_KEYWORD(tag, out_units);
 	BOOST_PARAMETER_KEYWORD(tag, act_function);
 	BOOST_PARAMETER_KEYWORD(tag, path);
-	BOOST_PARAMETER_KEYWORD(tag, shape);
+	BOOST_PARAMETER_KEYWORD(tag, in_shape);
 
 	using Tname = decltype(name);
 	using Tfilters = decltype(filters);
@@ -138,7 +138,7 @@ namespace experimental {
 	using Tout_units = decltype(out_units);
 	using Tact_function = decltype(act_function);
 	using Tpath = decltype(path);
-	using Tshape = decltype(shape);
+	using Tshape = decltype(in_shape);
 	using Trate = decltype(rate);
 
 	template <typename T, typename... Args>
@@ -151,8 +151,8 @@ namespace experimental {
 	public:
 		input() = default;
 		input(std::string path) :path_(path) {}
-		input(conv_shape sp) :sp_(sp) {}
-		input(std::string path, conv_shape sp) :path_(path), sp_(sp) {}
+		input(shape sp) :sp_(sp) {}
+		input(std::string path, shape sp) :path_(path), sp_(sp) {}
 
 		template <typename... ArgPack>
 		input(ArgPack&&... args) {
@@ -179,7 +179,7 @@ namespace experimental {
 				path_ = arg[path];
 			}
 			else if constexpr(std::is_convertible_v<T, Tshape>) {
-				sp_ = arg[shape];
+				sp_ = arg[in_shape];
 			}
 			else {
 				static_assert(false);
@@ -189,7 +189,7 @@ namespace experimental {
 	private:
 		
 		std::string path_;
-		conv_shape sp_;
+		shape sp_;
 	};
 
 	struct normalization {
