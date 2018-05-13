@@ -1,2 +1,2 @@
 # nnstream
-deep learning, user interface of neral network configuration, simple, fluent, safe interface
+deep learning, user interface of neural network configuration, simple, fluent, safe interface
