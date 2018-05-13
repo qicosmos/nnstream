@@ -7,7 +7,7 @@
 
 namespace experimental {
 	template<net_type nt>
-	struct of_net {
+	struct neural_net {
 
 		void add(Layer layer) {
 			layers_.push_back(std::move(layer));
@@ -31,7 +31,7 @@ namespace experimental {
 	};
 
 	template <net_type nt, typename Layer>
-	of_net<nt>& operator|(of_net<nt> &n, Layer &&l) {
+	neural_net<nt>& operator|(neural_net<nt> &n, Layer &&l) {
 		n.add(std::forward<Layer>(l));
 		return n;
 	}

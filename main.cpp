@@ -2,12 +2,12 @@
 #include <tuple>
 #include <variant>
 #include <vector>
-#include "of_net.hpp"
+#include "neural_net.hpp"
 
 using namespace experimental;
 
 void test_net1() {
-	using sequential_net = of_net<net_type::sequential>;
+	using sequential_net = neural_net<net_type::sequential>;
 	sequential_net net;
 	net | input(path = "/data", shape = conv_shape(1, 32, 32)) | normalization()
 		| conv_2d(kernel = (5), filters = 10, padding = same)
@@ -24,7 +24,7 @@ void test_net1() {
 void test_net2() {
 	max_pooling_2d max_pooling(kernel = (2), stride = (2));
 
-	using sequential_net = of_net<net_type::sequential>;
+	using sequential_net = neural_net<net_type::sequential>;
 	sequential_net net;
 	net | input(path = "/data", shape = conv_shape(1, 28, 28))
 		| conv_2d(kernel = (5), filters = 32, padding = same, channel_pos = first)
