@@ -29,7 +29,8 @@ template<typename str_type> struct builder//str_type is static class with string
 	};
 };
 
-#define Rate(string_literal) CSTRING(string_literal)
+#define STR(s) #s
+#define Rate(string_literal) CSTRING(STR(string_literal))
 
 #define CSTRING(string_literal) []{ \
     struct const_str { const char* chars = string_literal; }; \

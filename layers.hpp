@@ -327,27 +327,53 @@ namespace experimental {
 		std::string name_;
 	};
 
+	template<typename T, size_t N>
+	constexpr bool is_num() {
+		for (size_t i = 2; i < N; i++)
+		{
+			char ch = T::string[i];
+			if (T::string[i] > '9' || T::string[i] < '0')
+				return false;
+		}
+
+		return true;
+	}
+
+	template<typename T>
+	constexpr bool check_rate() {
+		constexpr auto N = T::value;
+		static_assert(T::string[0] == '0', "should less than 1");
+		static_assert(T::string[1] == '.', "the rate is invalid");
+		static_assert(is_num<T, N>(), "the rate must be number");
+		return true;
+	}
+
+	template<>
+	constexpr bool check_rate<str<'1', '.', '0'>>() { return true; }
+
+	template<>
+	constexpr bool check_rate<str<'1'>>() { return true; }
+
 	struct dropout {
 		dropout() = default;
 		template <typename... ArgPack>
-		dropout(ArgPack&&... args) {
+		dropout(ArgPack... args) {
 			(check(std::forward<ArgPack>(args)), ...);
 		}
-		template<typename T>
-		dropout(T t) : rate_(t.string) {
-		}
+		//template<typename T, typename=std::enable_if_t<check_rat(T{})>>
+		//dropout(T t) : rate_(t.string) {
+		//}
 
 		std::string to_string() {
 			return "";
 		}
 
 		template<typename ArgPack>
-		constexpr void check(ArgPack&& arg) {
-
-			using T = boost::parameter::keyword<ArgPack::key_type>;
-
-			if constexpr(std::is_convertible_v<T, Trate>) {
-				rate_ = arg[rate];
+		constexpr void check(ArgPack arg) {
+			//using T = boost::parameter::keyword<ArgPack::key_type>;
+			constexpr bool r = check_rate<ArgPack>();
+			if constexpr(r) {
+				rate_ = arg.string;
 			}
 			else {
 				static_assert(false);

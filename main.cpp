@@ -16,8 +16,9 @@ void test_net1() {
 		| full_connected(out_units = 64)
 		| soft_max();
 
-	net.save("net.prototxt");
 	std::string str = net.to_string();
+	net.save("net.prototxt");
+
 	std::cout << str << std::endl;
 }
 
@@ -29,13 +30,13 @@ void test_net2() {
 	net | input(path = "/data", in_shape = shape(1, 28, 28))
 		| conv_2d(kernel = (5), filters = 32, padding = same, channel_pos = first)
 		| relu()
-		| max_pooling_2d(kernel = (2), stride = (2)) //max_pooling
+		| max_pooling_2d(kernel = (2), stride = (2))
 		| conv_2d(kernel = (5), filters = 64)
 		| relu()
-		| max_pooling_2d(kernel = (2), stride = (2)) //max_pooling
+		| max_pooling_2d(kernel = (2, 2), stride = (2, 2))
 		| full_connected(out_units = 1024)
 		| relu()
-		| dropout(Rate("0.5"))
+		| dropout(Rate(0.5))
 		| full_connected(out_units = 10)
 		| soft_max(loss = softmax_sparse_cross_entropy);
 
@@ -43,9 +44,22 @@ void test_net2() {
 	std::string str = net.to_string();
 }
 
+void check_params() {
+	conv_2d conv1(kernel = (5), filters = 64); //ok
+	//conv_2d conv2(filters = 32, padding = same);  //error: lack of kernel
+	//conv_2d conv3(kernel = (5), use_bias = true); //error: lack of filters
+	//conv_2d conv4(kernel = (5), filters = 64£¬ out_units = 10); //error: invalid argument
+
+	//check_rate(Rate("0.2"));
+	dropout p(Rate(0.5)); //ok
+	//dropout p1(Rate(0.5a));//error: the rate must be number
+	//dropout p2(Rate(1.5));//error: the rate should less than 1
+	//dropout p3(Rate(00));//error: the rate is invalid
+}
+
 int main() {
 	test_net1();
 	test_net2();
-
+	check_params();
 	return 0;
 }
